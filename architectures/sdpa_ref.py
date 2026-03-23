@@ -72,11 +72,20 @@ def scaled_dot_product_attention_full(query, key, value, attn_mask=None, dropout
         else:
             attn_bias = attn_mask + attn_bias
 
-    # 1. GQA Handling: repeat_interleave KV heads to match query heads
-    # (B, H_kv, S, D) -> (B, H_q, S, D)
+    # 1. GQA (Grouped Query Attention) Handling
+    # In GQA/MQA, we have fewer KV heads (H_kv) than Query heads (H_q).
+    # To perform attention, we repeat each KV head (H_q // H_kv) times
+    # at the head dimension (dim -3) to match the number of Query heads.
+    # Input key/value: (B, H_kv, S, D) -> Output key/value: (B, H_q, S, D)
     if enable_gqa:
-        key = key.repeat_interleave(query.size(-3)//key.size(-3), -3)
-        value = value.repeat_interleave(query.size(-3)//value.size(-3), -3)
+        num_q_heads = query.size(-3)
+        num_kv_heads = key.size(-3)
+        repeat_ratio = num_q_heads // num_kv_heads
+        
+        # repeat_interleave repeats each element instead of the entire tensor
+        # e.g., if ratio=2: [h1, h2] -> [h1, h1, h2, h2]
+        key = key.repeat_interleave(repeat_ratio, dim=-3)
+        value = value.repeat_interleave(repeat_ratio, dim=-3)
 
     # 2. Score Calculation: (B, H_q, L, D) @ (B, H_q, D, S) -> (B, H_q, L, S)
     attn_weight = query @ key.transpose(-2, -1) * scale_factor
