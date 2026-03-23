@@ -16,17 +16,23 @@ def calculate_gauc(labels, preds, user_ids):
     user_auc_list = []
     user_weight_list = []
     
-    # 按用户分组处理
+    # 1. 按用户 ID 分组并行处理
+    # unique_users 获取数据集中所有出现过的唯一用户
     unique_users = np.unique(user_ids)
     for user in unique_users:
+        # 使用 mask 提取该用户对应的所有样本及其预测值
         user_mask = (user_ids == user)
         u_labels = labels[user_mask]
         u_preds = preds[user_mask]
         
-        # 只有同时包含正负样本的用户才能计算 AUC
+        # 2. 关键过滤逻辑：只有同时包含“正样本”和“负样本”的用户才能计算 AUC
+        # 因为 AUC 是衡量排序能力的（正样本排在负样本前的概率），
+        # 如果一个用户只有正样本或只有负样本，该用户的 AUC 无定义，必须剔除。
         if len(np.unique(u_labels)) == 2:
             auc = roc_auc_score(u_labels, u_preds)
             user_auc_list.append(auc)
+            # 3. 记录该用户的样本数（权重），后续用于加权平均
+            # 通常样本越多的活跃用户，其 AUC 对整体结果贡献越大
             user_weight_list.append(len(u_labels))
             
     if not user_auc_list:

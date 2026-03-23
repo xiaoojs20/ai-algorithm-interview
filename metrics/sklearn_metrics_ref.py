@@ -17,10 +17,20 @@ def classification_metrics_demo():
     acc = accuracy_score(y_true, y_pred)
     
     # 2. 精确率 (Precision) 和 召回率 (Recall)
+    # 精确率 (查准率)：TP / (TP + FP)
+    # 原理：在所有模型预测为“正”的样本里，有多少是真的“正”样本？
+    # 意义：衡量模型“说准”的能力，防止“错杀”（FP 要低）。
     precision = precision_score(y_true, y_pred)
+    
+    # 召回率 (查全率)：TP / (TP + FN)
+    # 原理：在所有实际为“正”的样本里，模型成功抓到了多少个？
+    # 意义：衡量模型“找全”的能力，防止“漏网之鱼”（FN 要低）。
     recall = recall_score(y_true, y_pred)
     
     # 3. F1 Score (2 * P * R / (P + R))
+    # 原理：精确率和召回率的调和平均数。
+    # 意义：用于综合评估。当 P 和 R 出现矛盾时（一个高一个低），F1 会偏向较低的那个值，
+    # 从而迫使模型在查准和查全之间寻找平衡点。常用于类别不平衡场景。
     f1 = f1_score(y_true, y_pred)
     
     # 4. AUC (Area Under ROC Curve) - 使用概率得分
