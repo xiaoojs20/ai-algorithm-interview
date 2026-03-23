@@ -1,6 +1,12 @@
-# 大模型算法工程师面试：核心代码复习手册 (LLM Interview Prep)
+# AI 算法面试：核心代码复习手册 (AI/LLM Interview Prep)
 
-本仓库包含了大模型 (LLM) 领域最核心、考频最高的算法实现。每个算法均配有 LaTeX 公式注释及详细的面试考点说明。
+本仓库包含了大模型 (LLM)、搜索 (Search) 与推荐 (RecSys) 领域最核心、考频最高的算法实现。
+
+每个算法均配有：
+- **xx_ref.py**: 带有公式注释及详细面试考点说明的参考实现。
+- **xx.py**: 空白练习模板，用于手写代码训练。
+
+---
 
 ## 📁 目录结构
 
@@ -9,29 +15,45 @@
 - **RoPE (Rotary Positional Embedding)**: 旋转矩阵应用、复数域旋转实数化、相对位置编码。
 - **MoE (Mixture of Experts)**: Router Gating 逻辑、Top-K 专家分发、负载均衡考点。
 - **RMSNorm**: 相比 LayerNorm 的简化点、方差计算逻辑。
-- **SwiGLU**: 门控线性单元、SiLU 激活函数。
+- **FlashAttention (Simulated)**: Tiling 分块计算原理、Online Softmax 动态更新。
+- **KV Cache**: 自回归推理时的增量生成逻辑。
+- **Embedding**: 可学习查找表 (Look-up Table) 的本质与调用方式。
 
-### 2. [偏好对齐与强化学习 (RLHF/Alignment)](./rlhf/)
-- **PPO & GRPO (DeepSeek Core)**: 组内相对奖励计算、裁剪损失 (Clipped Loss)、重要性采样比率。
-- **DPO (Direct Preference Optimization)**: Log-Ratio 计算、直接利用 Logps 计算 Loss、消除 Reward Model 的优势。
+### 2. [搜索与推荐 (Search & RecSys)](./rec_models/)
+- **DIN (Deep Interest Network)**: 用户行为序列注意力机制 (Target Attention)。
+- **DeepFM**: 结合 FM (低阶特征交叉) 与 Deep (高阶特征提取) 的端到端模型。
+
+### 3. [评价指标 (Metrics)](./metrics/)
+- **AUC & GAUC**: 衡量全局与用户分组内的排序能力。
+- **NDCG**: 考虑相关性分级与位置折扣因子的排序指标。
+- **Sklearn Metrics 调用**: Accuracy, Precision, Recall, F1, MSE, R2 等标准 API 用例。
+
+### 4. [优化器与损失 (Optimizers & Loss)](./optimizers/) 与 [损失函数](./loss/)
+- **Adam / AdamW**: 偏差修正 (Bias Correction)、解耦后的权重衰减 (Weight Decay)。
+- **InfoNCE (CL Loss)**: 对比学习 (Contrastive Learning) 中的正负样本相似度判别。
+- **LLM Loss (Next Token Prediction)**: 包含 Shift Align (平移对齐) 与 Masking 处理。
+- **SGD / CrossEntropy**: 基础随机梯度下降与交叉熵实现。
+
+### 5. [偏好对齐与强化学习 (RLHF/Alignment)](./rlhf/)
+- **PPO & GRPO**: 组内相对奖励计算、裁剪损失 (Clipped Loss)、重要性采样。
+- **DPO (Direct Preference Optimization)**: 消除 Reward Model，直接利用 Log-Ratio 进行偏好学习。
 - **GAE (Generalized Advantage Estimation)**: 优势估计的偏差与方差平衡。
 
-### 3. [训练、优化器与损失 (Optimizers & Loss)](./optimizers_loss/)
-- **Adam / AdamW**: 偏差修正 (Bias Correction)、解耦后的 Weight Decay (AdamW)。
-- **SGD**: 动力系数 (Momentum) 的物理意义。
-- **Stable Cross Entropy**: 数值稳定性 (Log-Sum-Exp Trick)。
+### 6. [参数高效微调 (PEFT)](./peft/)
+- **LoRA**: 矩阵低秩分解 ($W = W_0 + BA$)、缩放因子 ($\alpha/r$)、参数初始化策略。
 
-### 4. [参数高效微调 (PEFT)](./peft/)
-- **LoRA**: 矩阵低秩分解逻辑、初始化策略 ($B=0, A \sim \mathcal{N}$)、Scaling Factor ($\alpha/r$)。
+### 7. [经典算法 (Algorithms & Sorting)](./sort/)
+- **Sorting (9 种排序)**: 快速排序、归并排序、堆排序、希尔排序、计数排序、基数排序等。
+- **K-means**: 质心初始化、聚类分配与均值更新流程。
 
-### 5. [推理策略 (Decoding)](./decoding/)
-- **Beam Search**: Top-K 维持候选、Log-Score 累加、搜索逻辑。
+### 8. [推理解码 (Decoding)](./decoding/)
+- **Beam Search**: Top-K 维持候选、搜索权重评分逻辑。
 
 ---
 
 ## 💡 如何使用
-1. 先看 `xx_ref.py` (带有公式和注释的参考代码)，理解算法的每一行物理含义。
-2. 打开 `xx.py` (空白模板)，尝试在不看参考代码的情况下复现实现细节。
-3. **重点关注**：数值稳定性、张量形状 (Shape) 变换、以及特殊初始化 (如 LoRA B 矩阵)。
+1. **先看 `xx_ref.py`**: 理解算法的数学公式、张量形状 (Shape) 变换以及面试常问的实现细节。
+2. **手写练习 `xx.py`**: 在没有任何提示的情况下复现代码逻辑，确保掌握边界条件（如 Mask 处理或数值稳定性 Trick）。
+3. **重点突破**: 关注模型推理效率（KV Cache/FlashAttention）以及不平衡数据集处理（GAUC/F1）。
 
-祝你面试通关，拿到心仪 Offer！
+祝你面试通关，拿到心仪 Offer！🚀
