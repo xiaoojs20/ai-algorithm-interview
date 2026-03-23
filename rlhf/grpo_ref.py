@@ -5,14 +5,14 @@ def grpo_loss(rewards, log_probs, old_log_probs, ref_log_probs, eps=0.2, beta=0.
     """
     GRPO (Group Relative Policy Optimization)
     
+    Shapes:
+    - rewards: (Batch, Group_size) - 对于每个 Prompt 的采样组奖励分数
+    - log_probs, old_log_probs, ref_log_probs: (Batch, Group_size) - 对数概率
+    
     原理 (DeepSeek 核心创新)：
     1. 取消 Critic: 不再需要训练复杂的 Value 模型，大大节省显存。
     2. 组内得分 (Group Relative Reward): 对同一个 Prompt 采样多个 Output (G 个)，
-       用这组输出的均值作为基准线 (Baseline) 来衡量相对优势 (Advantage)。
-    
-    公式：
-    $ A_i = \frac{r_i - \text{mean}(G)}{\text{std}(G) + \epsilon} $
-    $ \mathcal{L}_{GRPO} = \mathcal{L}_{policy} + \beta \cdot D_{KL}(\pi_\text{ref} || \pi_\theta) $
+       用这组输出的均值作为投影基准来衡量相对优势 (Advantage)。
     """
     # 1. 组内相对优势计算 (Group Advantage)
     # rewards: (Batch_size, Group_size)

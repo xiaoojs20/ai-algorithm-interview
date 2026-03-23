@@ -47,7 +47,7 @@ class GQA(nn.Module):
         # (B, n_kv_heads, L, d_k) -> (B, n_q_heads, L, d_k)
         k = k.repeat_interleave(self.num_groups, dim=1)
         v = v.repeat_interleave(self.num_groups, dim=1)
-        
+    
         # 3. 计算缩放点积注意力
         # Q: (B, H_q, L, d_k), K^T: (B, H_q, d_k, L) -> Scores: (B, H_q, L, L)
         scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.d_k)

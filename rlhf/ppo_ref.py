@@ -6,13 +6,13 @@ def ppo_loss(log_probs, old_log_probs, advantages, values=None, old_values=None,
     """
     PPO (Proximal Policy Optimization)
     
-    原理：
-    PPO 是 RLHF 中的标准策略优化算法。它通过“裁剪”（Clipping）机制限制策略更新的幅度，
-    从而直接使用样本进行多次梯度下降，极大地提高了样本效率和训练稳定性。
+    Shapes:
+    - log_probs, old_log_probs: (N,) - 为 Batch_size * Seq_len 或采样点总数
+    - advantages: (N,) - 优势函数估计值
+    - values, returns: (N,) - 价值函数预测与目标值
     
-    1. 策略损失 (Policy Loss): $ \min(r_t A, \text{clip}(r_t, 1-\epsilon, 1+\epsilon) A) $
-    2. 价值损失 (Value Loss): 均方误差损失 $ (V_\theta - V_{target})^2 $
-    3. 熵损失 (Entropy Loss): 鼓励探索，防止策略退化。
+    原理：
+    PPO 是 RLHF 中的标准策略优化算法。它通过“裁剪”（Clipping）机制限制策略更新的幅度。
     """
     # 1. 计算概率比率 ratio: r_t(theta) = pi_theta / pi_old
     ratio = torch.exp(log_probs - old_log_probs)
