@@ -24,6 +24,7 @@
 
 ### 3. [评价指标 (Metrics)](./metrics/)
 - **AUC & GAUC**: 衡量全局与用户分组内的排序能力。
+- **Classification (Hand-written)**: 手写 TP/FP/TN/FN 统计、Macro/Micro F1、基于秩 (Rank) 的 AUC 计算。
 - **NDCG**: 考虑相关性分级与位置折扣因子的排序指标。
 - **Sklearn Metrics 调用**: Accuracy, Precision, Recall, F1, MSE, R2 等标准 API 用例。
 
