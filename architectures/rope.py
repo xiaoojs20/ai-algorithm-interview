@@ -13,5 +13,12 @@ class RoPE(nn.Module):
         pass
 
     def forward(self, x, seq_len):
-        # TODO: Apply rotary transformation
+        # x: (Batch, Heads, L, D)
+        # TODO: 
+        # 1. 计算维度频率 theta_i
+        # 2. 构造位置旋转分量 freqs (L, D/2) -> emb (L, D)
+        # 3. 采用“半半拆分”法执行旋转：
+        #    a. 将 x 拆分为 x1, x2 (各一半维度)
+        #    b. 构造旋转后的辅助项 x_rotated = [-x2, x1]
+        #    c. 根据公式 x * cos + x_rotated * sin 计算并返回
         pass

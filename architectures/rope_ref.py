@@ -35,20 +35,32 @@ class RoPE(nn.Module):
         # 用 einsum 实现外积：t(L) 和 inv_freq(D/2) -> freqs(L, D/2)
         freqs = torch.einsum("i,j->ij", t, self.inv_freq) 
         
-        # 3. 构造完整的旋转角度（通过将两个 freqs 拼接）
-        # emb: (L, D)
-        emb = torch.cat((freqs, freqs), dim=-1) 
+        # 3. 构造旋转矩阵的向量化分量 (L, D)
+        # 这里采用 LLaMA/HuggingFace 风格的半半拆分法：
+        # 将 D 维向量分为 [x1, x2, ..., x_{d/2}] 和 [x_{d/2+1}, ..., x_d]
+        # 然后将它们视为 (x_i, x_{i+d/2}) 这样的配对进行 2D 旋转。
+        emb = torch.cat((freqs, freqs), dim=-1) # Shape: (L, D)
         
-        # 计算 cos 和 sin
         cos, sin = emb.cos(), emb.sin() # Shape: (L, D)
         
-        # 4. 执行旋转操作 (基于複数运算的快速实现)
-        # 原始公式：x_new = [x1*cos - x2*sin, x2*cos + x1*sin]
-        # 下面代码拆分前一半和后一半维度
-        # x_rotated 是 [-x_half2, x_half1] 这样可以一行代码完成旋转计算
+        # 4. 执行旋转变换 (Rotary Transformation)
+        # 数学原理：对于一对坐标 (a, b)，旋转角度 theta 后的坐标为：
+        # [a*cos(theta) - b*sin(theta), b*cos(theta) + a*sin(theta)]
+        # 
+        # 为了高效实现（向量化），我们将输入 x 拆成两半：x1 和 x2
+        # x: [x_1, ..., x_{d/2}, x_{d/2+1}, ..., x_d]
+        # x1: [x_1, ..., x_{d/2}]
+        # x2: [x_{d/2+1}, ..., x_d]
         x1 = x[..., : x.shape[-1] // 2]
         x2 = x[..., x.shape[-1] // 2 :]
+        
+        # 构造旋转变换的辅助向量 x_rotated = [-x2, x1]
+        # x_rotated: [-x_{d/2+1}, ..., -x_d, x_1, ..., x_{d/2}]
         x_rotated = torch.cat((-x2, x1), dim=-1)
         
-        # 公式简化为：x * cos + x_rotated * sin
+        # 计算：x * cos + x_rotated * sin
+        # 对应位置相加后：
+        # 前半部分 (1 to d/2): x_i * cos(theta_i) - x_{i+d/2} * sin(theta_i)
+        # 后半部分 (d/2 to d): x_{i+d/2} * cos(theta_i) + x_i * sin(theta_i)
+        # 这完美匹配了复数旋转/2D 旋转矩阵的逐元素展开逻辑。
         return (x * cos) + (x_rotated * sin)
