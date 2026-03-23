@@ -94,7 +94,10 @@ def scaled_dot_product_attention_full(query, key, value, attn_mask=None, dropout
     # (B, H_q, L, S) + (L, S) broadcast -> (B, H_q, L, S)
     attn_weight += attn_bias
     
-    # 4. Softmax
+    # 4. Softmax (dim=-1)
+    # Why dim=-1? scores has shape (B, H_q, L, S), where S is the source (key) length.
+    # We want to normalize scores across all keys for each query token, 
+    # ensuring the attention weights for each query sum to 1.
     attn_weight = torch.softmax(attn_weight, dim=-1)
     
     # 5. Dropout
