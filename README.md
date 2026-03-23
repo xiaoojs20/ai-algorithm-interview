@@ -32,7 +32,7 @@
 
 ### 4. [优化器与损失 (Optimizers & Loss)](./optimizers/) 与 [损失函数](./loss/)
 - **Adam / AdamW**: 偏差修正 (Bias Correction)、解耦后的权重衰减 (Weight Decay)。
-- **InfoNCE (CL Loss)**: 对比学习 (Contrastive Learning) 中的正负样本相似度判别。
+- **InfoNCE (InfoNCE Loss)**: 对比学习 (Contrastive Learning) 中的正负样本相似度判别。
 - **LLM Loss (Next Token Prediction)**: 包含 Shift Align (平移对齐) 与 Masking 处理。
 - **Focal Loss**: 解决类别不平衡，通过 $(1-p_t)^\gamma$ 对易分类样本降权。
 - **Triplet Loss**: 三元组损失，使 Anchor 离正样本比离负样本更近。
