@@ -37,6 +37,8 @@
 
 ### 5. [偏好对齐与强化学习 (RLHF/Alignment)](./rlhf/)
 - **PPO & GRPO**: 组内相对奖励计算、裁剪损失 (Clipped Loss)、重要性采样。
+- **SAPO (Soft Adaptive Policy Optimization)**: 用平滑门控取代 PPO 裁剪，提升推理模型训练稳定性。
+- **GDPO (Group reward-Decoupled Normalization)**: 奖励解耦归一化，解决多目标奖励信号冲突。
 - **DPO (Direct Preference Optimization)**: 消除 Reward Model，直接利用 Log-Ratio 进行偏好学习。
 
 ### 6. [参数高效微调 (PEFT)](./peft/)
