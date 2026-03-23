@@ -12,6 +12,8 @@
 
 ### 1. [模型架构 (Architectures)](./architectures/)
 - **MHA & SDPA**: 注意力机制核心公式、Mask 逻辑、多头切分。
+- **GQA (Grouped Query Attention)**: KV 共享组、推理效率优化。
+- **MLA (Multi-head Latent Attention - DeepSeek)**: KV 压缩潜变量、RoPE 解耦合、KV Cache 极限优化。
 - **RoPE (Rotary Positional Embedding)**: 旋转矩阵应用、复数域旋转实数化、相对位置编码。
 - **MoE (Mixture of Experts)**: Router Gating 逻辑、Top-K 专家分发、负载均衡考点。
 - **RMSNorm**: 相比 LayerNorm 的简化点、方差计算逻辑。
