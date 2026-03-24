@@ -18,7 +18,7 @@ class LoRA(nn.Module):
     其中 $A \in \mathbb{R}^{d \times r}, B \in \mathbb{R}^{r \times d}$，$r$ 是秩（Rank），通常 $r \ll d$。
     
     初始化策略（面试必考）：
-    - A 矩阵：采用高斯初始化（如 Kaiming Uniform），提供初始权重。
+    - A 矩阵：采用**随机高斯初始化 (Random Gaussian)**，提供初始权重。
     - B 矩阵：必须初始化为 **全 0**。
     - 结果：通过 $B=0$，保证在训练刚开始时 $\Delta W = BA = 0$，此时模型输出与原始预训练模型完全一致，确保训练起点的稳定性。
     """
@@ -32,9 +32,11 @@ class LoRA(nn.Module):
         self.scaling = alpha / r
         
         # 1. 旁路 A 矩阵: [d_in, r] - 高斯初始化
+        # 按照 LoRA 论文原文，A 矩阵应采用随机高斯初始化 (Random Gaussian)
         self.lora_A = nn.Parameter(torch.empty(d_in, r))
-        nn.init.kaiming_uniform_(self.lora_A, a=5**0.5)
-        
+        # nn.init.kaiming_uniform_(self.lora_A, a=5**0.5)
+        nn.init.normal_(self.lora_A, mean=0.0, std=0.02) 
+
         # 2. 旁路 B 矩阵: [r, d_out] - 初始化为全 0
         self.lora_B = nn.Parameter(torch.zeros(r, d_out))
         
