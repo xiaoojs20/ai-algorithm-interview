@@ -14,7 +14,7 @@
 - **[Attention (注意力机制)](./architectures/attention/)**: MHA, SDPA, GQA, MLA, FlashAttention (Sim), KV Cache。
 - **[FFN & Activations (前馈网络与激活)](./architectures/ffn_act/)**: Standard FFN, SwiGLU, ReLU, Sigmoid, SiLU, GELU。
 - **[Positional Encoding (位置编码)](./architectures/pos_encoding/)**: RoPE (Rotary Positional Embedding)。
-- **[Norms (归一化)](./architectures/norms/)**: RMSNorm。
+- **[Norms (归一化)](./architectures/norms/)**: RMSNorm, LayerNorm (LN), BatchNorm (BN)。
 - **[MoE (混合专家模型)](./architectures/moe/)**: MoE Layer & Router。
 - **[Basic Layers (基础层)](./architectures/layers/)**: Embedding。
 
