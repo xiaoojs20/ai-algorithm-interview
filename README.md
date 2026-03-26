@@ -20,6 +20,7 @@
 
 ### 2. [搜索与推荐 (Search & RecSys)](./rec_models/)
 - **DIN (Deep Interest Network)**: 用户行为序列注意力机制 (Target Attention)。
+- **RankMixer (arXiv:2507.15551)**: ByteDance 硬件友好型排序架构。包含 Multi-Head Token Mixing 和 Per-Token FFN (PFFN)，显著提升 GPU 利用率 (MFU) 与模型扩展性。
 - **DeepFM**: 结合 FM (低阶特征交叉) 与 Deep (高阶特征提取) 的端到端模型。
 
 ### 3. [评价指标 (Metrics)](./metrics/)
